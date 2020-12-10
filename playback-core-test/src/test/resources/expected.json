@@ -1,0 +1,49 @@
+{
+  "object": {
+    "nums": [
+      1.0,
+      2.0,
+      3.0,
+      4.0
+    ],
+    "remove": [
+      4.0,
+      5.0
+    ],
+    "list": [
+      {
+        "obj": {
+          "add": true,
+          "going": null
+        }
+      },
+      {},
+      {
+        "object": {
+          "name": "thor"
+        },
+        "obj": null
+      }
+    ],
+    "other": "w",
+    "names": [
+      {
+        "name": "Steve"
+      },
+      {
+        "name": "Natasha"
+      }
+    ],
+    "array": [
+      [
+        4.0,
+        5.0
+      ],
+      [
+        1.0,
+        2.0,
+        3.0
+      ]
+    ]
+  }
+}

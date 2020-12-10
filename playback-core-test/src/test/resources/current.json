@@ -1,0 +1,38 @@
+{
+  "field": "value",
+  "object": {
+    "nums": [ 1, 2, 3, 4 ],
+    "remove": [ 4, 5 ],
+    "list": [
+      {
+        "obj": {
+          "name": "toto",
+          "add": true
+        }
+      },
+      {
+        "obj": {
+          "name": "titi"
+        }
+      },
+      {
+        "object": {
+          "name": "thor"
+        }
+      }
+    ],
+    "field": "v",
+    "other": "w",
+    "map": {
+      "items": 2
+    },
+    "names": [
+      { "name": "Steve" },
+      { "name": "Natasha" }
+    ],
+    "array": [
+      [ 4, 5 ],
+      [ 1, 2, 3 ]
+    ]
+  }
+}
