@@ -7,7 +7,6 @@ import com.github.playback.core.strategies.CompactStrategy
 import com.github.playback.core.strategies.PlaybackStrategy
 import com.github.playback.ext.gson.GsonJsonMapper
 import io.mockk.mockk
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -68,7 +67,7 @@ internal class CompactStrategyTest {
     val current = """{ "field": "value" }"""
     val origin = """{ "origin": 0 }"""
     val expected = """{"field": "value", "origin": null}"""
-    delta(origin, current, expected)
+    computeDelta(origin, current, expected)
   }
 
   @Test
@@ -76,20 +75,25 @@ internal class CompactStrategyTest {
     val current = """{ "field": "value" }"""
     val origin = """{ "field": "value" }"""
     val expected = """{}"""
-    delta(origin, current, expected)
+    computeDelta(origin, current, expected)
   }
 
   @Test
   fun testComputeDelta3() {
-    delta("/origin.json", "/current.json", "/expected.json")
+    computeDelta("/origin.json", "/current.json", "/expected.json")
   }
 
   @Test
   fun testComputeDelta4() {
-    delta("/nuxt_10.12.2020_1109.json", "/nuxt_10.12.2020_1118.json", "/nuxt_expected.json")
+    computeDelta("/nuxt_10.12.2020_1109.json", "/nuxt_10.12.2020_1118.json", "/nuxt_expected.json")
   }
 
-  private fun delta(origin: String, current: String, expected: String) {
+  @Test
+  fun testComputeDelta5() {
+    computeDelta("/list_delta_origin.json", "/list_delta_current.json", "/list_delta_expected.json")
+  }
+
+  private fun computeDelta(origin: String, current: String, expected: String) {
     if (origin.startsWith("/")) {
       val delta = CompactStrategy.computeMapDelta(load(origin), load(current))
       assertThat(delta).isEqualTo(load(expected))
@@ -97,6 +101,55 @@ internal class CompactStrategyTest {
       val delta = CompactStrategy.computeMapDelta(json(origin), json(current))
       assertThat(delta).isEqualTo(json(expected))
     }
+  }
+
+  @Test
+  fun testApplyDelta1() {
+    val current = """{ "field": "value" }"""
+    val delta = """{ "origin": 0 }"""
+    val expected = """{ "field": "value", "origin": 0 }"""
+    applyDelta(delta, current, expected)
+  }
+
+  @Test
+  fun testApplyDelta2() {
+    applyDelta("/expected.json", "/origin.json", "/current.json")
+  }
+
+  @Test
+  fun testApplyDelta3() {
+    val list: MutableList<Any?> = mutableListOf(1, 2, 3)
+    CompactStrategy.applyDelta(
+      listOf(1, 2, 3, 4),
+      list
+    )
+    assertThat(list).containsExactly(1, 2, 3, 4)
+  }
+
+  @Test
+  fun testApplyDelta4() {
+    val list: MutableList<Any?> = mutableListOf(1, 2, 3)
+    CompactStrategy.applyDelta(
+      listOf(4, 5),
+      list
+    )
+    assertThat(list).containsExactly(4, 5)
+  }
+
+  private fun applyDelta(delta: String, current: String, expected: String) {
+    if (delta.startsWith("/")) {
+      val result = load(current) as MutableMap<String, Any?>
+      CompactStrategy.applyDelta(load(delta), result)
+      assertThat(result).isEqualTo(load(expected))
+    } else {
+      val result = json(current) as MutableMap<String, Any?>
+      CompactStrategy.applyDelta(json(delta), result)
+      assertThat(result).isEqualTo(json(expected))
+    }
+  }
+
+  private fun applyDelta(delta: List<Any?>, current: MutableList<Any?>) {
+    CompactStrategy.applyDelta(delta, current)
   }
 
   private fun load(file: String): Map<String, Any?> = json(this::class.java.getResource(file).readText())

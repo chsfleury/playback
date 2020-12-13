@@ -11,5 +11,6 @@ allprojects {
     maven("https://kotlin.bintray.com/kotlinx/")
     mavenCentral()
     jcenter()
+    maven("https://jitpack.io")
   }
 }

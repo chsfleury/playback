@@ -16,6 +16,8 @@ dependencies {
   implementation(project(":playback-jvm-ext-gson"))
 
   implementation("org.slf4j:slf4j-simple:1.7.30")
+  implementation("com.github.uchuhimo.konf:konf-core:v0.23.0")
+  implementation("com.github.uchuhimo.konf:konf-yaml:v0.23.0")
 }
 
 tasks {
