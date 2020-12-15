@@ -1,10 +1,5 @@
 package com.github.playback.bundle.jvm
 
-import com.github.playback.bundle.jvm.BundleConfig.databasePass
-import com.github.playback.bundle.jvm.BundleConfig.databaseUrl
-import com.github.playback.bundle.jvm.BundleConfig.databaseUser
-import com.github.playback.bundle.jvm.BundleConfig.patchInterval
-import com.github.playback.bundle.jvm.BundleConfig.port
 import com.github.playback.core.Playback
 import com.github.playback.ext.gson.GsonJsonMapper
 import com.github.playback.ext.javalin.JavalinWebServer
@@ -18,8 +13,11 @@ object PlaybackApp {
   @JvmStatic
   fun main(args: Array<String>) {
 
-    val config = Config { addSpec(BundleConfig) }
-      .from.yaml.file("playback.yml")
+    val config = Config {
+      addSpec(HttpSpec)
+      addSpec(DatabaseSpec)
+      addSpec(StrategySpec)
+    }.from.yaml.file("playback.yml", true)
       .from.env()
       .from.systemProperties()
 
@@ -28,13 +26,13 @@ object PlaybackApp {
     val jsonMapper = GsonJsonMapper()
     val documentRepository = MysqlDocumentRepository(
       jsonMapper,
-      config[databaseUrl],
-      config[databaseUser],
-      config[databasePass]
+      config[DatabaseSpec.url],
+      config[DatabaseSpec.user],
+      config[DatabaseSpec.pass]
     )
 
-    Playback.initialize(webServer, jsonMapper, documentRepository, config[patchInterval])
-    javalin.start(config[port])
+    Playback.initialize(webServer, jsonMapper, documentRepository, config[StrategySpec.patchInterval])
+    javalin.start(config[HttpSpec.port])
   }
 
 }

@@ -1,6 +1,7 @@
 plugins {
   kotlin("jvm")
   application
+  id("com.google.cloud.tools.jib") version "2.7.0"
 }
 
 application {
@@ -26,5 +27,11 @@ tasks {
   }
   compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+  }
+}
+
+jib {
+  to {
+    image = "playback-jvm-sql"
   }
 }
